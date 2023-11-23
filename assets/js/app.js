@@ -22,8 +22,17 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
+let MyHooks = {}
+// https://hexdocs.pm/phoenix_live_view/js-interop.html#client-server-communication
+MyHooks.SendScreenPosition = {
+  mounted(){
+    window.addEventListener("phx:my-screen-event", e => {
+      this.pushEvent("screen-response", {x: window.screenLeft, y: window.screenTop, width: innerWidth, height: innerHeight})
+    })
+  },
+}
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
+let liveSocket = new LiveSocket("/live", Socket, {hooks: MyHooks, params: {_csrf_token: csrfToken}})
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
