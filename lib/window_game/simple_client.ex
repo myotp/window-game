@@ -16,8 +16,8 @@ defmodule WindowGame.SimpleClient do
         IO.puts("shutdown #{inspect(self())}")
         :ok
 
-      {:update, {x, y, w, h}} ->
-        GameServer.report({x, y, w, h})
+      {:update, {x, y}} ->
+        GameServer.report({x, y})
         loop()
 
       msg ->

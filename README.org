@@ -1,7 +1,5 @@
-* gogogo
+* Test client
 pid1 = SimpleClient.start_client()
-pid2 = SimpleClient.start_client()
-send(pid1, {:update, {10, 10, 50, 50}})
-send(pid2, {:update, {10, 10, 70, 70}})
+send(pid1, {:update, {1023, 100}})
+send(pid1, {:update, {5023, 40}})
 send(pid1, :stop)
-send(pid2, :stop)

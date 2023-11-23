@@ -1,7 +1,7 @@
 defmodule WindowGame.GameServer do
   use GenServer
 
-  @refresh_interval 1000
+  @refresh_interval 100
 
   # API
   def join() do
@@ -18,7 +18,7 @@ defmodule WindowGame.GameServer do
 
   @impl GenServer
   def init(_) do
-    Process.send_after(self(), :tick, @refresh_interval)
+    schedule_ticker()
     {:ok, %{}}
   end
 
@@ -36,7 +36,7 @@ defmodule WindowGame.GameServer do
 
   @impl GenServer
   def handle_info(:tick, map) do
-    Process.send_after(self(), :tick, @refresh_interval)
+    schedule_ticker()
 
     map
     |> Map.keys()
@@ -46,12 +46,18 @@ defmodule WindowGame.GameServer do
   end
 
   def handle_info({:DOWN, _, :process, client_pid, _}, map) do
+    schedule_ticker()
     IO.puts("Client process #{inspect(client_pid)} down")
     {:noreply, Map.delete(map, client_pid)}
   end
 
   def handle_info(msg, map) do
+    schedule_ticker()
     IO.inspect(msg, label: "HANDLE INFO")
     {:noreply, map}
+  end
+
+  defp schedule_ticker() do
+    Process.send_after(self(), :tick, @refresh_interval)
   end
 end

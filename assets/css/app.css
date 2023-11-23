@@ -3,3 +3,21 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+.center {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden; /* 隐藏超出容器的部分 */
+}
+
+.line {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  width: 50%;
+  height: 20px;
+  background-color: red;
+  transform: translateX(0%); /* 将线条左移一半长度，使其右侧贴边 */
+}
