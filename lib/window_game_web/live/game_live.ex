@@ -1,5 +1,6 @@
 defmodule WindowGameWeb.GameLive do
   use Phoenix.LiveView, layout: false
+  alias WindowGame.GameServer
 
   @screen_report_interval 2000
 
@@ -7,6 +8,7 @@ defmodule WindowGameWeb.GameLive do
   def mount(_params, _session, socket) do
     if connected?(socket) do
       schedule_screen_timer()
+      GameServer.join()
     end
 
     {:ok, socket}
@@ -15,6 +17,7 @@ defmodule WindowGameWeb.GameLive do
   @impl true
   def handle_event("screen-response", %{"x" => x, "y" => y, "width" => w, "height" => h}, socket) do
     IO.inspect({x, y, w, h}, label: "SCREEN")
+    GameServer.report({x, y, w, h})
     {:noreply, socket}
   end
 
@@ -22,6 +25,11 @@ defmodule WindowGameWeb.GameLive do
   def handle_info(:tick, socket) do
     schedule_screen_timer()
     {:noreply, push_event(socket, "my-screen-event", %{})}
+  end
+
+  def handle_info({:global_state, game_state}, socket) do
+    IO.inspect(game_state, label: "GAME STATE")
+    {:noreply, socket}
   end
 
   @impl true
